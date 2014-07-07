@@ -59,7 +59,7 @@ module Resque
       # @param [Array] args job arguments
       # @return [String, nil] job identifier
       def identifier(*args)
-        args.join('-')
+        Resque.decode(Resque.encode(args)).join('-')
       end
 
       # Override to fully control the redis object used for storing
@@ -297,6 +297,10 @@ module Resque
           end
           release_lock!(*args)
         end
+      end
+
+      def on_failure_lock(error, *args)
+        release_lock!(*args)
       end
 
     end
